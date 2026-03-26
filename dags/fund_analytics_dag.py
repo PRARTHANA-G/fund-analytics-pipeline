@@ -80,7 +80,7 @@ dbt_run = BashOperator(
         ),
     )
  
-    dbt_test = BashOperator(
+dbt_test = BashOperator(
         task_id="dbt_test",
         bash_command=(
             "cd /opt/dbt/fund_analytics && "
