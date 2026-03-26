@@ -1,0 +1,63 @@
+# docker-compose.yml
+version: '3.8'
+ 
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.8.1-python3.11
+  environment:
+    - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    - AIRFLOW__CORE__FERNET_KEY=
+    - AIRFLOW__CORE__LOAD_EXAMPLES=false
+    - GOOGLE_APPLICATION_CREDENTIALS=/opt/credentials/gcp_key.json
+    - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./ingestion:/opt/airflow/ingestion
+    - ./dbt:/opt/dbt
+    - ./credentials:/opt/credentials:ro
+    - ./logs:/opt/airflow/logs
+  depends_on:
+    - postgres
+ 
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+ 
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate
+        airflow users create \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com
+        echo "Airflow initialized!"
+    restart: "no"
+ 
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+    restart: always
+ 
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    restart: always
+volumes:
+  postgres_data:

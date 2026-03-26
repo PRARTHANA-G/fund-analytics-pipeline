@@ -1,0 +1,13 @@
+# models/staging/sources.yml
+version: 2
+ 
+sources:
+  - name: raw
+    database: fund-analytics-pipeline
+    schema: raw
+    tables:
+      - name: fund_prices
+        description: "Raw fund/ETF price data from yfinance"
+      - name: exchange_rates
+        description: "Raw ECB exchange rate data"
+

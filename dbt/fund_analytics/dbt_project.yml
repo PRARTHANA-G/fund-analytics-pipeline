@@ -1,0 +1,17 @@
+# dbt/fund_analytics/dbt_project.yml
+name: 'fund_analytics'
+version: '1.0.0'
+profile: 'fund_analytics'
+ 
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+ 
+models:
+  fund_analytics:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts
