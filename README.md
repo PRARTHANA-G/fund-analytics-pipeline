@@ -49,5 +49,4 @@ docker-compose up -d
 # Dashboard:  http://localhost:8501
 ```
  
-## Project Structure
-[Copy the folder tree from Phase 4]
+
