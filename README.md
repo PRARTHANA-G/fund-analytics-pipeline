@@ -5,7 +5,20 @@ data, loads it into BigQuery, transforms it with dbt,
 and orchestrates everything with Airflow in Docker.
  
 ## Architecture
-[Insert architecture diagram screenshot]
+APIs (yfinance, ECB)
+    |
+    v
+Python Ingestion Scripts
+    |
+    v
+BigQuery [raw layer] ──> dbt transforms ──> BigQuery [staging + marts]
+                                                  |
+                                                  v
+                                          Streamlit Dashboard
+ 
+All orchestrated by: Apache Airflow (running in Docker)
+
+
  
 ## Tech Stack
 - **Ingestion**: Python, yfinance, ECB API
